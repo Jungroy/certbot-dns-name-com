@@ -4,9 +4,9 @@ import requests
 
 
 class NameComDNS:
-    def __init__(self, domain_name):
-        self.username = 'username at name.com'
-        self.token = 'token'
+    def __init__(self, domain_name, username, token):
+        self.username = username
+        self.token = token
         self.domain_name = domain_name
 
     def list_records(self):
@@ -19,15 +19,15 @@ class NameComDNS:
         url = 'https://api.name.com/v4/domains/%s/records' % self.domain_name
         r = requests.post(url, data=json.dumps(data), auth=(self.username, self.token))
         if r.status_code == 200 or r.status_code == 201:
-            print(r.json())
+            return r.json()
         else:
-            print('%s: %s' % (r.status_code, r.content))
+            raise ConnectionError('Unexpected response (%s: %s)' % (r.status_code, r.content))
 
     def del_record(self, record_id):
         url = 'https://api.name.com/v4/domains/%s/records/%s' % (self.domain_name, record_id)
         r = requests.delete(url, data=data, auth=(self.username, self.token))
 
-        print(r.json())
+        return r.json()
 
 
 if __name__ == '__main__':
